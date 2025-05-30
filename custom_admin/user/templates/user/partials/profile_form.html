@@ -1,0 +1,48 @@
+<form method="post" action="{% url 'update_profile' %}" enctype="multipart/form-data" class="needs-validation">
+  {% csrf_token %}
+  <div class="card-header">
+    <h4>Edit Profile</h4>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="form-group col-md-6 col-12">
+        <label>First Name</label>
+        {{ form.first_name }}
+      </div>
+      <div class="form-group col-md-6 col-12">
+        <label>Last Name</label>
+        {{ form.last_name }}
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group col-md-6 col-12">
+        <label>Email</label>
+        {{ form.email }}
+      </div>
+      <div class="form-group col-md-6 col-12">
+        <label>Profession</label>
+        {{ form.profession }}
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group col-md-6 col-12">
+        <label>Birth Date</label>
+        {{ form.birth_date }}
+      </div>
+    </div>
+      <div class="form-group col-12">
+        <label>Profile Picture</label>
+        {{ form.profile_picture }}
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group col-12">
+        <label>Bio</label>
+        {{ form.bio }}
+      </div>
+    </div>
+  </div>
+  <div class="card-footer text-right">
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+  </div>
+</form>

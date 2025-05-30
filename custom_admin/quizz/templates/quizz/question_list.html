@@ -1,0 +1,105 @@
+{% load static %}
+{% block content %}
+{% include "main_template/navbar.html" %}
+
+<div class="main-content">
+  <section class="section">
+    {% include 'quizz/partials/question_header.html' %}
+
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+            <h4>Questions List</h4>
+            <div class="card-header-form d-flex">
+              <a href="{% url 'question_create' %}" class="btn btn-success mr-2">
+                <i class="fas fa-plus"></i> Create Question
+              </a>
+              <form>
+                <div class="input-group">
+                  <input type="text" id="customSearchInput" class="form-control" placeholder="Search">
+                  <div class="input-group-btn">
+                    <button class="btn btn-primary" type="button">
+                      <i class="fas fa-search"></i>
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-striped" id="questionTable">
+                <thead>
+                  <tr>
+                    <th class="text-center">
+                      <div class="custom-checkbox custom-checkbox-table custom-control">
+                        <input type="checkbox" class="custom-control-input" id="checkbox-all">
+                        <label for="checkbox-all" class="custom-control-label">&nbsp;</label>
+                      </div>
+                    </th>
+                    <th>Quizz</th>
+                    <th>Creator</th>
+                    <th>Question</th>
+                    <th>Created_at</th>
+                    <th>Type</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {% for question in questions %}
+                  <tr>
+                    <td class="p-0 text-center">
+                      <div class="custom-checkbox custom-control">
+                        <input type="checkbox" class="custom-control-input" id="checkbox-{{ question.id }}">
+                        <label for="checkbox-{{ question.id }}" class="custom-control-label">&nbsp;</label>
+                      </div>
+                    </td>
+                    <td>{{ question.quizz }}</td>
+                    <td>{{ question.quizz.creator.email }}</td>
+                    <td>{{ question.text }}</td>
+                    <td>{{ question.created_at }}</td>
+                    <td><span class="badge badge-info">{{ question.type }}</span></td>
+                    <td>
+                      <a href="{% url 'question_detail' question.id %}" class="btn btn-info btn-sm"><i class="fas fa-eye"></i></a>
+                      <a href="{% url 'question_update' question.id %}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                      <form action="{% url 'question_delete' question.id %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?');">
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </section>
+</div>
+
+
+<script>
+  $(document).ready(function () {
+    var table = $('#questionTable').DataTable({
+      paging: true,
+      searching: true,
+      ordering: true,
+      order: [],
+      columnDefs: [{ orderable: false, targets: [0, 2] }],
+      dom: 'rt<"bottom"p>',
+    });
+    $('#customSearchInput').on('keyup', function () {
+      table.search(this.value).draw();
+    });
+  });
+</script>
+{% endblock %}

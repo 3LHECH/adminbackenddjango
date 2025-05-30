@@ -1,0 +1,8 @@
+asgiref==3.8.1
+Django==5.1.5
+django-htmx==1.23.0
+djangorestframework==3.16.0
+pillow==11.2.1
+sqlparse==0.5.3
+typing_extensions==4.13.2
+whitenoise==6.9.0

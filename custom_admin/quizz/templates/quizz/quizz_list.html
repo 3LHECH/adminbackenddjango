@@ -1,0 +1,112 @@
+{% load static %}
+{% block content %}
+{% include "main_template/navbar.html" %}
+
+<div class="main-content">
+  <section class="section">
+    {% include 'quizz/partials/quizz_header.html' %}
+
+    <div class="row">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+            <h4>Quizz List</h4>
+            <div class="card-header-form d-flex">
+              <a href="{% url 'quizz_create' %}" class="btn btn-success mr-2">
+                <i class="fas fa-plus"></i> Create Quizz
+              </a>
+              <form>
+                <div class="input-group">
+                  <input type="text" id="customSearchInput" class="form-control" placeholder="Search">
+                  <div class="input-group-btn">
+                    <button class="btn btn-primary" type="button">
+                      <i class="fas fa-search"></i>
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+          
+
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-striped" id="quizzTable">
+                <thead>
+                  <tr>
+                    <th class="text-center">
+                      <div class="custom-checkbox custom-checkbox-table custom-control">
+                        <input type="checkbox" class="custom-control-input" id="checkbox-all">
+                        <label for="checkbox-all" class="custom-control-label">&nbsp;</label>
+                      </div>
+                    </th>
+                    <th>Title</th>
+                    <th>Creator</th>
+                    <th>Profession</th>
+                    <th>Created_at</th>
+                    <th>Staff</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {% for quiz in quizzes %}
+                  <tr>
+                    <td class="p-0 text-center">
+                      <div class="custom-checkbox custom-control">
+                        <input type="checkbox" class="custom-control-input" id="checkbox-{{ quiz.id }}">
+                        <label for="checkbox-{{ quiz.id }}" class="custom-control-label">&nbsp;</label>
+                      </div>
+                    </td>
+                    <td>{{ quiz.title }}</td>
+                    <td>{{ quiz.creator.email }}</td>
+                    <td><span class="badge badge-info">{{ quiz.creator.profession }}</span></td>
+                    <td>{{ quiz.created_at }}</td>
+                    <td>
+                      {% if quiz.creator.is_staff %}
+                        <span class="badge badge-success">Yes</span>
+                      {% else %}
+                        <span class="badge badge-danger">No</span>
+                      {% endif %}
+                    </td>
+                    <td>
+                      <a href="{% url 'quizz_detail' quiz.id %}" class="btn btn-info btn-sm"><i class="fas fa-eye"></i></a>
+                      <a href="{% url 'quizz_update' quiz.id %}" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                      <form action="{% url 'quizz_delete' quiz.id %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?');">
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </section>
+</div>
+
+
+<script>
+  $(document).ready(function () {
+    var table = $('#quizTable').DataTable({
+      paging: true,
+      searching: true,
+      ordering: true,
+      order: [],
+      columnDefs: [{ orderable: false, targets: [0, 2] }],
+      dom: 'rt<"bottom"p>',
+    });
+    $('#customSearchInput').on('keyup', function () {
+      table.search(this.value).draw();
+    });
+  });
+</script>
+{% endblock %}

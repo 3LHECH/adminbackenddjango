@@ -1,0 +1,7 @@
+myenv
+custom_admin/profiles/
+custom_admin/*/__pycache__/
+custom_admin/*/migrations/__pycache__/
+custom_admin/*/migrations/00*
+custom_admin/quizz/migrations/00*
+custom_admin/db.sqlite3

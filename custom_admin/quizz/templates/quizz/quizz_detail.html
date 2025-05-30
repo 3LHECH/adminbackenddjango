@@ -1,0 +1,30 @@
+{% include "main_template/navbar.html" %}
+{% load static %}
+{% block content %}
+<div class="main-content">
+
+  <div class="col-12 col-md-12 col-lg-8">
+    <div class="card">
+      <div class="card-header">
+        <h4>Quizz: {{ object.title }}</h4>
+      </div>
+      <div class="card-body">
+        {% if object.questions.all %}
+          <ul class="list-group">
+            {% for question in object.questions.all %}
+              <li class="list-group-item">
+                <strong>Type:</strong> {{ question.get_type_display }} <br>
+                <strong>Text:</strong> {{ question.text }} <br>
+                <small class="text-muted">Created at: {{ question.created_at|date:"Y-m-d H:i" }}</small>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p>No questions linked to this quiz.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

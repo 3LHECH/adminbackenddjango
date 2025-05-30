@@ -1,0 +1,19 @@
+{% load static %}
+{% block content %}
+{% include "main_template/navbar.html" %}
+<div class="main-content">
+
+<div class="container mt-4">
+  <h2>{% if form.instance.pk %}Edit{% else %}Create{% endif %} Quizz</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success" id="swal-2">Save</button>
+    
+    <a href="{% url 'user_list' %}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+</div>
+<script src="{% static 'main_template/assets/js/custom/custom.js' %}"></script>
+
+{% endblock %}
