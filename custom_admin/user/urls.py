@@ -1,5 +1,11 @@
 from . import views
-from django.urls import path
+from django.urls import path,include
+from rest_framework import routers
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView
+)
 
 urlpatterns = [  
     path('', views.home, name="profile"),
@@ -12,5 +18,6 @@ urlpatterns = [
     path('users/<int:pk>/update/', views.UserUpdateView.as_view(), name='user_update'),
     path('users/<int:pk>/delete/', views.UserDeleteView.as_view(), name='user_delete'),
     path('api/user-signups/', views.user_signups, name='user-signups'),
+
 
 ]

@@ -4,7 +4,6 @@ from django.shortcuts import render
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
-from django.contrib.auth.forms import UserCreationForm
 from .forms import CustomUserForm ,CustomUserLogin,UserUpdateForm
 from django.contrib.auth import get_user_model
 from django.contrib.auth import logout
@@ -25,7 +24,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
 from rest_framework.decorators import api_view, permission_classes
 from django.utils.timezone import now, timedelta
-from .permissions import IsStaff,StaffRequiredMixin
+from .permissions import IsStaff
 from quizz.models import Question,Answer
 from django.db.models import Count, Q
 
@@ -73,6 +72,7 @@ def home(request):
     else:
         form_login = CustomUserLogin()
         return render(request, "user/login.html", {"form_login": form_login})
+
 def login_user(request):
     if request.method == 'POST':
         username = request.POST.get('email')
@@ -80,7 +80,6 @@ def login_user(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            print(user)
             return redirect('profile')  
         else:
             messages.error(request, 'Invalid username or password')
@@ -107,7 +106,6 @@ def logout_user(request):
     return redirect('home')
 
 @login_required
-
 def update_profile(request):
     user = request.user
     if request.method == 'POST':
@@ -138,11 +136,13 @@ class StaffRequiredMixin(UserPassesTestMixin):
         return redirect('home')  
         
 
-class UserListView(LoginRequiredMixin, StaffRequiredMixin, ListView):
+
+class UserListView(LoginRequiredMixin, ListView):
     model = User
     template_name = 'user/user_list.html'  
     context_object_name = 'users'
     ordering = ['first_name']  
+    
     paginate_by = 20
 
     def get_context_data(self, **kwargs):
@@ -167,14 +167,12 @@ class UserListView(LoginRequiredMixin, StaffRequiredMixin, ListView):
         else:
             percent_change = ((new_users_this_week - new_users_last_week) / new_users_last_week) * 100
 
-        # Envoi au template
         context['new_users_this_week'] = new_users_this_week
         context['new_users_last_week'] = new_users_last_week
         context['percent_change'] = round(percent_change, 2)
         return context
 
 @api_view(['GET'])
-@permission_classes([IsStaff])
 def user_signups(request):
     data = (
         User.objects
@@ -212,4 +210,6 @@ class UserDeleteView(LoginRequiredMixin, StaffRequiredMixin, DeleteView):
     model = User
     template_name = 'user/user_confirm_delete.html'
     success_url = reverse_lazy('user_list')
+
+
 
