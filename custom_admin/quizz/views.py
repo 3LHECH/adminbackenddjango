@@ -10,9 +10,11 @@ from django.db.models import Count
 from rest_framework.response import Response
 from django.contrib import messages
 from user.models import User
+from .permissions import StaffRequiredMixin
 from rest_framework.decorators import api_view, permission_classes
-from .permissions import IsStaff,StaffRequiredMixin
-class QuizzListView(LoginRequiredMixin, ListView):
+from django.contrib.admin.views.decorators import staff_member_required
+
+class QuizzListView(LoginRequiredMixin,StaffRequiredMixin, ListView):
     model = Quizz
     context_object_name = 'quizzes'
 
@@ -45,6 +47,7 @@ class QuizzListView(LoginRequiredMixin, ListView):
 
 
 @api_view(['GET'])
+@staff_member_required
 def quizz_chart(request):
     data = (
         Quizz.objects
@@ -56,30 +59,30 @@ def quizz_chart(request):
 
     return Response(data)
 
-class QuizzDetailView(LoginRequiredMixin, DetailView):
+class QuizzDetailView(LoginRequiredMixin,StaffRequiredMixin, DetailView):
     model = Quizz
     template_name = 'quizz/quizz_detail.html'
 
-class QuizzCreateView(LoginRequiredMixin, CreateView):
+class QuizzCreateView(LoginRequiredMixin,StaffRequiredMixin, CreateView):
     model = Quizz
     form_class = QuizzForm
     template_name = 'quizz/quizz_create.html'
     success_url = reverse_lazy('quizz_list')
 
 
-class QuizzUpdateView(LoginRequiredMixin, UpdateView):
+class QuizzUpdateView(LoginRequiredMixin,StaffRequiredMixin, UpdateView):
     model = Quizz
     form_class = QuizzForm
     success_url = reverse_lazy('quizz_list')
     template_name = 'quizz/quizz_update.html'
 
 
-class QuizzDeleteView(LoginRequiredMixin, DeleteView):
+class QuizzDeleteView(LoginRequiredMixin,StaffRequiredMixin, DeleteView):
     model = Quizz
     success_url = reverse_lazy('quizz_list')
 
 
-class QuestionListView(LoginRequiredMixin, ListView):
+class QuestionListView(LoginRequiredMixin,StaffRequiredMixin, ListView):
     model = Question
     template_name = 'quizz/question_list.html'
     context_object_name = 'questions'
@@ -112,6 +115,7 @@ class QuestionListView(LoginRequiredMixin, ListView):
 
 
 @api_view(['GET'])
+@staff_member_required
 def question_chart(request):
     data = (
         Question.objects
@@ -123,11 +127,11 @@ def question_chart(request):
 
     return Response(data)
 
-class QuestionDetailView(LoginRequiredMixin, DetailView):
+class QuestionDetailView(LoginRequiredMixin,StaffRequiredMixin, DetailView):
     model = Question
     template_name = 'quizz/question_detail.html'
 
-class QuestionCreateView(LoginRequiredMixin, CreateView):
+class QuestionCreateView(LoginRequiredMixin,StaffRequiredMixin, CreateView):
     model = Question
     form_class = QuestionForm
     template_name = 'quizz/question_create.html'
@@ -138,17 +142,18 @@ class QuestionCreateView(LoginRequiredMixin, CreateView):
         messages.success(self.request, 'Your question has been saved!')
         return response
     
-class QuestionUpdateView(LoginRequiredMixin, UpdateView):
+class QuestionUpdateView(LoginRequiredMixin,StaffRequiredMixin, UpdateView):
     model = Question
     form_class = QuestionForm
     success_url = reverse_lazy('question_list')
     template_name = 'quizz/question_update.html'
 
-class QuestionDeleteView(LoginRequiredMixin, DeleteView):
+class QuestionDeleteView(LoginRequiredMixin,StaffRequiredMixin, DeleteView):
     model = Question
     success_url = reverse_lazy('question_list')
 
 @api_view(['GET'])
+@staff_member_required
 def question_chart(request):
     data = (
         Question.objects
@@ -160,7 +165,7 @@ def question_chart(request):
 
     return Response(data)
 
-class AnswerListView(LoginRequiredMixin, ListView):
+class AnswerListView(LoginRequiredMixin,StaffRequiredMixin, ListView):
     model = Answer
     context_object_name = 'answers'
 
@@ -170,11 +175,11 @@ class AnswerListView(LoginRequiredMixin, ListView):
 
         return context
 
-class AnswerDetailView(LoginRequiredMixin, DetailView):
+class AnswerDetailView(LoginRequiredMixin,StaffRequiredMixin, DetailView):
     model = Answer
     template_name = 'quizz/answer_detail.html'
 
-class AnswerCreateView(LoginRequiredMixin, CreateView):
+class AnswerCreateView(LoginRequiredMixin,StaffRequiredMixin, CreateView):
     model = Answer
     form_class = AnswerForm
     success_url = reverse_lazy('answer_list')
@@ -185,13 +190,13 @@ class AnswerCreateView(LoginRequiredMixin, CreateView):
         messages.success(self.request, 'Your Answear has been saved!')
         return super().form_valid(form)
 
-class AnswerUpdateView(LoginRequiredMixin, UpdateView):
+class AnswerUpdateView(LoginRequiredMixin,StaffRequiredMixin, UpdateView):
     model = Answer
     form_class = AnswerForm
     success_url = reverse_lazy('answer_list')
     template_name = 'quizz/answer_update.html'
 
-class AnswerDeleteView(LoginRequiredMixin, DeleteView):
+class AnswerDeleteView(LoginRequiredMixin,StaffRequiredMixin, DeleteView):
     model = Answer
     success_url = reverse_lazy('answer_list')
 
@@ -212,12 +217,14 @@ def get_answer_chart(is_correct, email=None):
     return list(result)
 
 @api_view(['GET'])
+@staff_member_required
 def correct_answer_chart(request):
     email = request.GET.get('email')
     data = get_answer_chart(is_correct=True, email=email)
     return Response(data)
 
 @api_view(['GET'])
+@staff_member_required
 def wrong_answer_chart(request):
     email = request.GET.get('email')
     data = get_answer_chart(is_correct=False, email=email)
