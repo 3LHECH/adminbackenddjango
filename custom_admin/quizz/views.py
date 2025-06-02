@@ -195,41 +195,32 @@ class AnswerDeleteView(LoginRequiredMixin, DeleteView):
     model = Answer
     success_url = reverse_lazy('answer_list')
 
-@api_view(['GET'])
-def correct_answer_chart(request):
-    email = request.GET.get('email')
-    answers = Answer.objects.filter(is_correct=True)
+
+def get_answer_chart(is_correct, email=None):
+    answers = Answer.objects.filter(is_correct=is_correct)
 
     if email:
-        answers = answers.filter(user__email=email)
+        answers = answers.filter(selected_by__email=email)
 
     result = (
         answers
-        .annotate(month=TruncMonth('answered_at'))
+        .annotate(month=TruncMonth('created_at'))
         .values('month')
         .annotate(count=Count('id'))
         .order_by('month')
     )
-    data = list(result)
-    return Response(data)
+    return list(result)
 
+@api_view(['GET'])
+def correct_answer_chart(request):
+    email = request.GET.get('email')
+    data = get_answer_chart(is_correct=True, email=email)
+    return Response(data)
 
 @api_view(['GET'])
 def wrong_answer_chart(request):
     email = request.GET.get('email')
-    answers = Answer.objects.filter(is_correct=False)
-    print(email)
-    if email:
-        answers = answers.filter(user__email=email)
-
-    result = (
-        answers
-        .annotate(month=TruncMonth('answered_at'))
-        .values('month')
-        .annotate(count=Count('id'))
-        .order_by('month')
-    )
-    data = list(result)
+    data = get_answer_chart(is_correct=False, email=email)
     return Response(data)
 
 

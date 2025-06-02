@@ -15,6 +15,7 @@ class QuestionForm(forms.ModelForm):
 class AnswerForm(forms.ModelForm):
     class Meta:
         model = Answer
-        fields = ['user', 'question','text', 'is_correct']
-
-
+        fields = ['selected_by', 'question', 'text', 'is_correct']
+        widgets = {
+            'selected_by': forms.CheckboxSelectMultiple()
+        }

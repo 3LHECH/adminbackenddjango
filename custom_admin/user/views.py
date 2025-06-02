@@ -44,7 +44,6 @@ def home(request):
 
         stats = (
             Answer.objects
-            .filter(user=request.user)
             .values('question__type')
             .annotate(
                 total=Count('id'),

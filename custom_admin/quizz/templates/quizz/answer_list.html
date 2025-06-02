@@ -40,10 +40,9 @@
                       </div>
                     </th>
                     <th>Quizz</th>
-                    <th>User</th>
                     <th>Question</th>
                     <th>Answer</th>
-                    <th>Answered_at</th>
+                    <th>Created_at</th>
                     <th>Type</th>
                     <th>Correct</th>
                     <th>Actions</th>
@@ -60,10 +59,9 @@
                       </div>
                     </td>
                     <td>{{ answer.question.quizz }}</td>
-                    <td id="email" >{{ answer.user.email }}</td>
                     <td>{{ answer.question.text }}</td>
                     <td>{{ answer.text }}</td>
-                    <td>{{ answer.answered_at }}</td>
+                    <td>{{ answer.created_at }}</td>
                     <td><span class="badge badge-info">{{ answer.question.type }}</span></td>
                     <td>
                       {% if answer.is_correct %}

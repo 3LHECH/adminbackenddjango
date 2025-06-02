@@ -1,0 +1,30 @@
+{% include "main_template/navbar.html" %}
+{% load static %}
+{% block content %}
+<div class="main-content">
+
+  <div class="col-12 col-md-12 col-lg-8">
+  <h1>Answer Detail</h1>
+
+  <p><strong>Question:</strong> {{ answer.question.text }}</p>
+
+  <p><strong>Answer Text:</strong> {{ answer.text }}</p>
+
+  <p><strong>Is Correct?</strong> {{ answer.is_correct|yesno:"Yes,No" }}</p>
+
+  <p><strong>Created At:</strong> {{ answer.created_at }}</p>
+
+  <h3>Users who selected this answer:</h3>
+  <ul>
+    {% for user in answer.selected_by.all %}
+      <li>{{ user.email }}</li>
+    {% empty %}
+      <li>No users have selected this answer yet.</li>
+    {% endfor %}
+  </ul>
+
+  <a href="{% url 'question_detail' answer.question.pk %}">Back to Question</a>
+    </div>
+
+</div>
+{% endblock %}
